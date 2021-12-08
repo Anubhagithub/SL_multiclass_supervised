@@ -1,0 +1,30 @@
+setwd("/home/nikola/new_def_SL_SV/featues/")
+bin = read.csv("model_input_revise2_slsvsdl2.csv")
+is.na(bin)
+bin_fltr = bin[which(bin$shortest_path != Inf),]
+bin_fltr2 = na.omit(bin_fltr)
+library(dplyr)
+data = sample_frac(bin_fltr2, 0.50)
+data = data[, c(1,23)]
+library(mltools)
+library(data.table)
+newdata <- one_hot(as.data.table(data))
+library(caret)
+dummy <- dummyVars(" ~ .", data=data, fullRank = T)
+newdata <- data.frame(predict(dummy, newdata = data)) 
+library(reshape2)
+newdata <- dcast(data = data,  pair ~ gi, length)
+write.csv(newdata, "one_hot_2percentofallnetwprop.csv", row.names = F, quote = F)
+View(d)
+reshape2::dcast(data)
+glimpse(newdata)
+#trial data
+set.seed(555)
+d <- data.frame(
+  Outcome = seq(1,100,by=1),
+  Variable = sample(c("Red","Green","Blue"), 100, replace = TRUE)
+)
+n <- one_hot(as.data.table(d))
+du <- dummyVars(" ~ .", data=d)
+n <- data.frame(predict(du, newdata = d))
+n <- dcast(data = melt(d, id.vars = "ID"), ID ~ variable + value, length)

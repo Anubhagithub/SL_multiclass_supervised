@@ -1,0 +1,25 @@
+setwd("/home/nikola/new_def_SL_SV/featues/")
+data = read.csv("model_input_revise2_slsvsdl2.csv")
+library(dplyr)
+library(ggplot2)
+install.packages("psych")
+library(psych)
+install.packages("naivebayes")
+library(naivebayes)
+str(data)
+data$gi = as.factor(data$gi)
+par(mar=c(1,1,1,1))
+par(mfcol=c(5,3),mai=c(0.5,0.5,0.5,0))
+pairs.panels(data[-1])
+dev.off()
+graphics.off()
+index = sample(2, nrow(data), replace = T, prob = c(0.6, 0.4))
+train = data[index == 1,]
+test = data[index == 2,]
+naive_bayes_model = naive_bayes(gi ~. , data = train)
+naive_bayes_model
+plot(naive_bayes_model)
+p = predict(naive_bayes_model, train, type = "prob")
+p1 = predict(naive_bayes_model, train)
+tab1 = table(p1, train$gi)
+tab1
