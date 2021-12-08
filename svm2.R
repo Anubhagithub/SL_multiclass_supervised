@@ -59,15 +59,22 @@ close(con)
 dim(dataChunk)
 print(paste0('lepton_pT mean: ',  total_lepton_pT / counter))
 
+
+if(.Platform$OS.type == "ubuntu") withAutoprint({
+  memory.size()
+  memory.size(TRUE)
+  memory.limit()
+})
 #RAM management
 install.packages("disk.frame")
 library(disk.frame)
 setup_disk.frame()
-Sys.getenv("PATH")
-df = disk.frame("/home/nikola/.local/bin/diskf")
-
 diskf = disk.frame::csv_to_disk.frame("/home/nikola/new_def_SL_SV/featues/model_input_revise2_slsvsdl2.csv")
 diskf2 = as.data.frame(diskf)
+Sys.getenv("PATH")
+df = disk.frame("/home/nikola/.local/bin/diskf")
+head(df)
+
 anyNA(diskf2)
 diskf2 = diskf2[which(diskf2$shortest_path != Inf),]
 diskf2 = na.omit(diskf2)
@@ -87,3 +94,4 @@ tr_svm[["gi"]] = factor(tr_svm[["gi"]])
 trctrl = trainControl(method = "repeatedcv", number = 10, repeats = 3)
 svm_model = train(gi ~., data = tr_svm, method = "svmLinear", trControl = trctrl, 
                   preProcess = c("center", "scale"), tuneLength = 10)
+library(dplyr)
